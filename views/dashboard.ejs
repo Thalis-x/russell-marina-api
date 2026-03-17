@@ -1,0 +1,32 @@
+<%- include('partials/head', { title: 'Tableau de bord' }) %>
+<%- include('partials/nav') %>
+
+<div class="dashboard-container">
+  <!-- En-tête utilisateur -->
+  <div class="dashboard-header">
+    <div class="user-info">
+      <h1>Bonjour, <strong><%= user.username %></strong> </h1>
+      <p class="user-email"> <%= user.email %></p>
+    </div>
+    <div class="date-display">
+      <p> <%= new Date().toLocaleDateString('fr-FR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      }) %></p>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number"><%= totalCatways %></div>
+      <div class="stat-label">Catways au total</div>
+    </div>
+    <div class="stat-card stat-active">
+      <div class="stat-number"><%= activeReservations.length %></div>
+      <div class="stat-label">Réservations en cours</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= totalUsers %></div>
+      <div class="stat-label">Utilisateurs</div>
+    </div>
+  </div>
