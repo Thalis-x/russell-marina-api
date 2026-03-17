@@ -269,3 +269,57 @@ router.put('/:idReservation', async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// DELETE /catways/:id/reservations/:idReservation — Supprimer une réservation
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways/{id}/reservations/{idReservation}:
+ *   delete:
+ *     summary: Supprime une réservation
+ *     tags: [Réservations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: idReservation
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Réservation supprimée
+ *       404:
+ *         description: Réservation non trouvée
+ */
+router.delete('/:idReservation', async (req, res) => {
+  try {
+    const reservation = await Reservation.findOneAndDelete({
+      _id: req.params.idReservation,
+      catwayNumber: req.params.id,
+    });
+
+    if (!reservation) {
+      return res.status(404).json({
+        success: false,
+        message: 'Réservation introuvable.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Réservation supprimée avec succès.',
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+module.exports = router;
