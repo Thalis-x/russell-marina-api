@@ -168,3 +168,8 @@ a:hover { text-decoration: underline; }
 .quick-link-card span { font-size: 2rem; }
 .quick-link-card small { color: var(--text-light); font-size: .8rem; }
 
+/* === Alerts === */
+.alert { padding: 1rem 1.2rem; border-radius: var(--radius); margin-bottom: 1rem; font-size: .95rem; }
+.alert-success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid var(--success); }
+.alert-error   { background: #ffebee; color: #c62828; border-left: 4px solid var(--danger); }
+.empty-state   { text-align: center; padding: 3rem; color: var(--text-light); font-size: 1.1rem; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
