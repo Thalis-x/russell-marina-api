@@ -18,3 +18,34 @@ const router = express.Router();
 
 // Applique le middleware d'authentification sur TOUTES les routes de ce fichier
 router.use(protect);
+
+// =============================================================================
+// GET /catways — Lister tous les catways
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways:
+ *   get:
+ *     summary: Récupère la liste de tous les catways
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des catways
+ */
+router.get('/', async (req, res) => {
+  try {
+    // .sort({ catwayNumber: 1 }) → triés par numéro croissant
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+
+    res.status(200).json({
+      success: true,
+      count: catways.length,
+      data: catways,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
