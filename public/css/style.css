@@ -1,0 +1,26 @@
+/* =========================================================
+   Port de Plaisance Russell — Feuille de style principale
+   ========================================================= */
+
+/* === Variables CSS === */
+:root {
+  --primary:    #1a4b8c;
+  --primary-dk: #0f2d5a;
+  --accent:     #2196f3;
+  --success:    #4caf50;
+  --warning:    #ff9800;
+  --danger:     #f44336;
+  --bg:         #f0f4f8;
+  --white:      #ffffff;
+  --text:       #2c3e50;
+  --text-light: #6b7c93;
+  --border:     #dde1e7;
+  --shadow:     0 2px 12px rgba(0,0,0,.08);
+  --radius:     8px;
+}
+
+/* === Reset & Base === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
