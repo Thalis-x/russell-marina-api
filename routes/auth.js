@@ -95,3 +95,22 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+// GET /logout — Déconnexion
+
+/**
+ * @swagger
+ * /logout:
+ *   get:
+ *     summary: Déconnexion utilisateur
+ *     tags: [Authentification]
+ *     responses:
+ *       200:
+ *         description: Déconnexion réussie
+ */
+router.get('/logout', (req, res) => {
+  // Supprimer le cookie en le remplaçant par un cookie vide expiré
+  res.clearCookie('token');
+  res.redirect('/');
+});
+
+module.exports = router;
