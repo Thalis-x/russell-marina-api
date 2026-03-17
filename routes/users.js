@@ -148,3 +148,71 @@ router.post('/', async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// PUT /users/:email — Modifier un utilisateur
+// =============================================================================
+
+/**
+ * @swagger
+ * /users/{email}:
+ *   put:
+ *     summary: Modifie les informations d'un utilisateur
+ *     tags: [Utilisateurs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Utilisateur mis à jour
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
+router.put('/:email', async (req, res) => {
+  try {
+    const { username, email: newEmail, password } = req.body;
+    const updateData = {};
+
+    if (username)  updateData.username = username;
+    if (newEmail)  updateData.email    = newEmail.toLowerCase();
+
+    // Si un nouveau mot de passe est fourni, on le hache manuellement
+    // (findOneAndUpdate ne déclenche pas le pre('save') du modèle)
+    if (password) {
+      const bcrypt = require('bcryptjs');
+      updateData.password = await bcrypt.hash(password, 12);
+    }
+
+    const user = await User.findOneAndUpdate(
+      { email: req.params.email.toLowerCase() },
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `Utilisateur "${req.params.email}" introuvable.`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Utilisateur mis à jour.',
+      data: user,
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cette adresse email est déjà utilisée.',
+      });
+    }
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
