@@ -212,3 +212,60 @@ router.post('/', async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// PUT /catways/:id/reservations/:idReservation — Modifier une réservation
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways/{id}/reservations/{idReservation}:
+ *   put:
+ *     summary: Modifie une réservation
+ *     tags: [Réservations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: idReservation
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Réservation mise à jour
+ *       404:
+ *         description: Réservation non trouvée
+ */
+router.put('/:idReservation', async (req, res) => {
+  try {
+    // On exclut catwayNumber du body pour ne pas pouvoir le modifier
+    const { catwayNumber: _, ...updateData } = req.body;
+
+    const reservation = await Reservation.findOneAndUpdate(
+      { _id: req.params.idReservation, catwayNumber: req.params.id },
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!reservation) {
+      return res.status(404).json({
+        success: false,
+        message: 'Réservation introuvable.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Réservation mise à jour.',
+      data: reservation,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
