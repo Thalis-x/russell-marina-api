@@ -4,9 +4,9 @@
   "description": "Application web de gestion des réservations de catways pour le port de Russell, avec API privée sécurisée pour gérer les disponibilités et les attributions d’amarrage.",
   "main": "server.js",
   "scripts": {
-  "start": "node server.js",
-  "dev": "nodemon server.js"
-}
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Thalis-x/russell-marina-api.git"
