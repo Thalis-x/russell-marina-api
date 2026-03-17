@@ -116,3 +116,14 @@ a:hover { text-decoration: underline; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .page-header h1 { color: var(--primary); }
 .back-link { display: block; font-size: .85rem; color: var(--text-light); margin-bottom: .3rem; }
+
+/* === Stats === */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card {
+  background: var(--white); padding: 1.5rem; border-radius: var(--radius);
+  box-shadow: var(--shadow); text-align: center; border-top: 4px solid var(--primary);
+}
+.stat-active { border-top-color: var(--success); }
+.stat-number { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
+.stat-active .stat-number { color: var(--success); }
+.stat-label { color: var(--text-light); font-size: .9rem; margin-top: .3rem; }
