@@ -99,3 +99,28 @@
     </form>
   </div>
 </div>
+<script>
+  function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function hideModal(id) { document.getElementById(id).classList.add('hidden'); }
+  function showEditModal(email, username) {
+    document.getElementById('editUsername').value = username;
+    document.getElementById('editForm').action =
+      '/dashboard/users/' + encodeURIComponent(email) + '/edit';
+    showModal('editModal');
+  }
+let mouseDownTarget = null;
+window.addEventListener('mousedown', e => {
+  mouseDownTarget = e.target;
+});
+window.addEventListener('click', e => {
+  if (
+    e.target.classList.contains('modal') &&
+    mouseDownTarget.classList.contains('modal')
+  ) {
+    e.target.classList.add('hidden');
+  }
+});
+</script>
+
+</body>
+</html>
