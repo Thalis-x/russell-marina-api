@@ -106,3 +106,13 @@ a:hover { text-decoration: underline; }
 .btn-delete:hover { background: #ffcdd2; }
 .btn-view  { background: #e8f5e9; color: #2e7d32; text-decoration: none; display: inline-block; }
 .btn-view:hover  { background: #c8e6c9; }
+
+/* === Dashboard === */
+.dashboard-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+.dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.user-info h1 { font-size: 1.7rem; color: var(--primary); }
+.user-email { color: var(--text-light); margin-top: .3rem; }
+.date-display { background: var(--white); padding: .8rem 1.4rem; border-radius: var(--radius); box-shadow: var(--shadow); }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.page-header h1 { color: var(--primary); }
+.back-link { display: block; font-size: .85rem; color: var(--text-light); margin-bottom: .3rem; }
