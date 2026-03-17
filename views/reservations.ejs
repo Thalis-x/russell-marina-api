@@ -106,3 +106,32 @@
     </form>
   </div>
 </div>
+
+<!-- Modal : Modifier réservation -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Modifier la réservation</h2>
+    <form id="editForm" method="POST">
+      <div class="form-group">
+        <label>Nom du client</label>
+        <input type="text" name="clientName" id="editClient" required />
+      </div>
+      <div class="form-group">
+        <label>Nom du bateau</label>
+        <input type="text" name="boatName" id="editBoat" required />
+      </div>
+      <div class="form-group">
+        <label>Date de début</label>
+        <input type="date" name="startDate" id="editStart" required />
+      </div>
+      <div class="form-group">
+        <label>Date de fin</label>
+        <input type="date" name="endDate" id="editEnd" required />
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary">Enregistrer</button>
+        <button type="button" class="btn-secondary" onclick="hideModal('editModal')">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
