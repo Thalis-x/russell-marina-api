@@ -106,3 +106,109 @@ router.get('/:idReservation', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// POST /catways/:id/reservations — Créer une réservation
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways/{id}/reservations:
+ *   post:
+ *     summary: Crée une nouvelle réservation pour un catway
+ *     tags: [Réservations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [clientName, boatName, startDate, endDate]
+ *             properties:
+ *               clientName:
+ *                 type: string
+ *               boatName:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       201:
+ *         description: Réservation créée
+ *       400:
+ *         description: Données invalides ou conflit de dates
+ *       404:
+ *         description: Catway non trouvé
+ */
+router.post('/', async (req, res) => {
+  try {
+    const catwayNumber = Number(req.params.id);
+
+    // Vérifier que le catway existe
+    const catway = await Catway.findOne({ catwayNumber });
+    if (!catway) {
+      return res.status(404).json({
+        success: false,
+        message: `Catway numéro ${catwayNumber} introuvable.`,
+      });
+    }
+    if (!catway.isAvailable) {
+  return res.status(400).json({
+    success: false,
+    message: `Le catway ${catwayNumber} n'est pas disponible : ${catway.catwayState}`,
+  });
+}
+
+    const { clientName, boatName, startDate, endDate } = req.body;
+    const start = new Date(startDate);
+    const end   = new Date(endDate);
+
+    // Vérifier les chevauchements de réservations
+    // On cherche si une réservation existe qui chevauche la période demandée
+    const overlap = await Reservation.findOne({
+      catwayNumber,
+      $or: [
+        { startDate: { $lt: end }, endDate: { $gt: start } },
+      ],
+    });
+
+    if (overlap) {
+      return res.status(400).json({
+        success: false,
+        message: `Le catway ${catwayNumber} est déjà réservé sur cette période.`,
+        conflictWith: {
+          client: overlap.clientName,
+          from: overlap.startDate,
+          to: overlap.endDate,
+        },
+      });
+    }
+
+    const reservation = await Reservation.create({
+      catwayNumber,
+      clientName,
+      boatName,
+      startDate: start,
+      endDate: end,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Réservation créée avec succès.',
+      data: reservation,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
