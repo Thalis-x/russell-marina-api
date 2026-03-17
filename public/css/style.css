@@ -85,3 +85,24 @@ a:hover { text-decoration: underline; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
   outline: none; border-color: var(--accent);
 }
+
+/* === Buttons === */
+.btn-primary {
+  background: var(--primary); color: var(--white); border: none;
+  padding: .75rem 1.5rem; border-radius: var(--radius); font-size: 1rem;
+  cursor: pointer; transition: background .2s; font-family: inherit;
+}
+.btn-primary:hover { background: var(--primary-dk); }
+.btn-secondary {
+  background: transparent; color: var(--text-light); border: 1.5px solid var(--border);
+  padding: .75rem 1.5rem; border-radius: var(--radius); font-size: 1rem;
+  cursor: pointer; transition: all .2s; font-family: inherit;
+}
+.btn-secondary:hover { border-color: var(--text-light); }
+.btn-sm { padding: .3rem .7rem; font-size: .82rem; border-radius: 5px; cursor: pointer; border: none; font-family: inherit; }
+.btn-edit  { background: #e3f2fd; color: #1565c0; }
+.btn-edit:hover  { background: #bbdefb; }
+.btn-delete { background: #ffebee; color: #c62828; }
+.btn-delete:hover { background: #ffcdd2; }
+.btn-view  { background: #e8f5e9; color: #2e7d32; text-decoration: none; display: inline-block; }
+.btn-view:hover  { background: #c8e6c9; }
