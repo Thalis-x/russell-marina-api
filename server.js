@@ -55,3 +55,79 @@ app.use(express.static(path.join(__dirname, 'public')));
 // --- Moteur de vues EJS ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// =============================================================================
+// Documentation Swagger
+// =============================================================================
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API Port de Plaisance Russell',
+      version: '1.0.0',
+      description: `
+## API de gestion du Port de Plaisance Russell
+
+Cette API privée permet à la capitainerie de gérer :
+- Les **catways** (appontements d'amarrage)
+- Les **réservations** des plaisanciers
+- Les **utilisateurs** de la capitainerie
+
+### Authentification
+L'API utilise des **tokens JWT**. Pour accéder aux routes protégées :
+1. Appelez \`POST /login\` avec vos identifiants
+2. Copiez le token reçu
+3. Cliquez sur "Authorize" et entrez : \`Bearer <votre_token>\`
+      `,
+      contact: { name: 'Capitainerie de Russell' },
+    },
+    servers: [
+      { url: 'http://localhost:3000', description: 'Serveur de développement' },
+      { url: process.env.PRODUCTION_URL || '', description: 'Serveur de production' },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+  },
+  // Chercher les commentaires JSDoc dans tous les fichiers de routes
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'API Russell - Documentation',
+
+  customJsStr: `
+    (function () {
+      function watchToggle() {
+        const btn = document.querySelector('.dark-mode-toggle button');
+        if (!btn) return false;
+
+        // Au clic, sauvegarde le NOUVEL état (après toggle)
+        btn.addEventListener('click', function () {
+          const isDark = document.documentElement.classList.contains('dark-mode');
+          localStorage.setItem('swaggerDarkMode', !isDark);
+        });
+
+        // Applique le dark mode sauvegardé
+        if (localStorage.getItem('swaggerDarkMode') === 'true') {
+          btn.click();
+        }
+
+        return true;
+      }
+
+      const interval = setInterval(function () {
+        if (watchToggle()) clearInterval(interval);
+      }, 200);
+
+      setTimeout(function () { clearInterval(interval); }, 10000);
+    })();
+  `,
+}));
