@@ -30,3 +30,47 @@
       <div class="stat-label">Utilisateurs</div>
     </div>
   </div>
+
+  <!-- Tableau des réservations en cours -->
+  <section class="reservations-section">
+    <h2> Réservations en cours</h2>
+
+    <% if (activeReservations.length === 0) { %>
+      <p class="empty-state">Aucune réservation en cours actuellement.</p>
+    <% } else { %>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>N° Catway</th>
+              <th>Client</th>
+              <th>Bateau</th>
+              <th>Date début</th>
+              <th>Date fin</th>
+              <th>Jours restants</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% activeReservations.forEach(r => {
+              const today = new Date();
+              const end   = new Date(r.endDate);
+              const daysLeft = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+            %>
+            <tr>
+              <td><span class="badge"><%= r.catwayNumber %></span></td>
+              <td><%= r.clientName %></td>
+              <td><em><%= r.boatName %></em></td>
+              <td><%= new Date(r.startDate).toLocaleDateString('fr-FR') %></td>
+              <td><%= new Date(r.endDate).toLocaleDateString('fr-FR') %></td>
+              <td>
+                <span class="days-badge <%= daysLeft <= 7 ? 'urgent' : '' %>">
+                  <%= daysLeft %> j
+                </span>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </section>
