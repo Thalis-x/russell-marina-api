@@ -42,3 +42,28 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// -----------------------------------------------------------------------------
+// MIDDLEWARE PRE-SAVE : Hachage du mot de passe
+// Ce code s'exécute AVANT chaque save() si le mot de passe a été modifié.
+// On utilise bcrypt avec un "salt" de 12 tours (bon compromis sécurité/perf).
+// -----------------------------------------------------------------------------
+userSchema.pre('save', async function (next) {
+  // Si le mot de passe n'a pas été modifié, on passe au suivant
+  if (!this.isModified('password')) return next();
+
+  // Hachage du mot de passe
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
+
+// -----------------------------------------------------------------------------
+// MÉTHODE D'INSTANCE : Vérifier le mot de passe
+// comparePassword() est appelée lors du login pour vérifier le mdp entré.
+// bcrypt.compare() compare le mot de passe en clair avec le hash stocké.
+// -----------------------------------------------------------------------------
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model('User', userSchema);
