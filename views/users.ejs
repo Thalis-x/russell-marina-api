@@ -1,0 +1,56 @@
+<%- include('partials/head', { title: 'Gestion des Utilisateurs' }) %>
+<%- include('partials/nav') %>
+
+<div class="dashboard-container">
+  <div class="page-header">
+    <h1>Gestion des Utilisateurs</h1>
+    <button class="btn-primary" onclick="showModal('createModal')">+ Nouvel utilisateur</button>
+  </div>
+
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="alert alert-success"><%= message %></div>
+  <% } %>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nom d'utilisateur</th>
+          <th>Email</th>
+          <th>Créé le</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u => { %>
+        <tr class="<%= u.email === currentUser.email ? 'row-current' : '' %>">
+          <td>
+            <strong><%= u.username %></strong>
+            <% if (u.email === currentUser.email) { %>
+              <span class="you-badge">vous</span>
+            <% } %>
+          </td>
+          <td><%= u.email %></td>
+          <td><%= new Date(u.createdAt).toLocaleDateString('fr-FR') %></td>
+          <td class="actions">
+            <button class="btn-sm btn-edit"
+              onclick="showEditModal('<%= u.email %>', '<%= u.username %>')">
+              Modifier
+            </button>
+            <% if (u.email !== currentUser.email) { %>
+            <form action="/dashboard/users/<%= encodeURIComponent(u.email) %>/delete"
+              method="POST" style="display:inline"
+              onsubmit="return confirm('Supprimer l\'utilisateur <%= u.username %> ?')">
+              <button type="submit" class="btn-sm btn-delete">Supprimer</button>
+            </form>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
