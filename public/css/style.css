@@ -138,3 +138,20 @@ a:hover { text-decoration: underline; }
 .row-past td { opacity: .6; }
 .row-current td { background: #f0fff4 !important; }
 .actions { display: flex; gap: .4rem; align-items: center; }
+
+/* === Badges & Tags === */
+.badge { background: var(--primary); color: var(--white); padding: .2rem .6rem; border-radius: 20px; font-size: .85rem; font-weight: 600; }
+.tag { padding: .2rem .7rem; border-radius: 20px; font-size: .8rem; font-weight: 600; }
+.tag-long  { background: #e3f2fd; color: #1565c0; }
+.tag-short { background: #f3e5f5; color: #6a1b9a; }
+.you-badge { background: var(--accent); color: var(--white); font-size: .7rem; padding: .1rem .5rem; border-radius: 20px; margin-left: .5rem; }
+.days-badge { background: #e8f5e9; color: #2e7d32; padding: .2rem .6rem; border-radius: 20px; font-size: .82rem; }
+.days-badge.urgent { background: #fff3e0; color: #e65100; }
+.status-ok   { color: var(--success); }
+.status-warn { color: var(--warning); }
+.state-cell  { max-width: 300px; font-size: .9rem; }
+.status-badge { padding: .25rem .7rem; border-radius: 20px; font-size: .78rem; font-weight: 600; }
+.status-badge.active   { background: #e8f5e9; color: #2e7d32; }
+.status-badge.past     { background: #eeeeee; color: #616161; }
+.status-badge.upcoming { background: #e3f2fd; color: #1565c0; }
+
