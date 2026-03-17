@@ -92,3 +92,57 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// POST /catways — Créer un catway
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways:
+ *   post:
+ *     summary: Crée un nouveau catway
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [catwayNumber, catwayType, catwayState]
+ *             properties:
+ *               catwayNumber:
+ *                 type: integer
+ *               catwayType:
+ *                 type: string
+ *                 enum: [long, short]
+ *               catwayState:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Catway créé
+ *       400:
+ *         description: Données invalides
+ */
+router.post('/', async (req, res) => {
+  try {
+    const catway = await Catway.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: 'Catway créé avec succès.',
+      data: catway,
+    });
+  } catch (error) {
+    // Gestion de l'erreur d'unicité MongoDB (code 11000)
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: `Le numéro de catway ${req.body.catwayNumber} existe déjà.`,
+      });
+    }
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
