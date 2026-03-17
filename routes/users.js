@@ -44,3 +44,44 @@ router.get('/', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// GET /users/:email — Détail d'un utilisateur
+// =============================================================================
+
+/**
+ * @swagger
+ * /users/{email}:
+ *   get:
+ *     summary: Récupère les détails d'un utilisateur par email
+ *     tags: [Utilisateurs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Détails de l'utilisateur
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
+router.get('/:email', async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email.toLowerCase() });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `Utilisateur "${req.params.email}" introuvable.`,
+      });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
