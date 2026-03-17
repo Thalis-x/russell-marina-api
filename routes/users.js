@@ -216,3 +216,61 @@ router.put('/:email', async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// DELETE /users/:email — Supprimer un utilisateur
+// =============================================================================
+
+/**
+ * @swagger
+ * /users/{email}:
+ *   delete:
+ *     summary: Supprime un utilisateur
+ *     tags: [Utilisateurs]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Utilisateur supprimé
+ *       400:
+ *         description: Impossible de se supprimer soi-même
+ *       404:
+ *         description: Utilisateur non trouvé
+ */
+router.delete('/:email', async (req, res) => {
+  try {
+    // Empêcher un utilisateur de se supprimer lui-même
+    if (req.user.email === req.params.email.toLowerCase()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vous ne pouvez pas supprimer votre propre compte.',
+      });
+    }
+
+    const user = await User.findOneAndDelete({
+      email: req.params.email.toLowerCase(),
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `Utilisateur "${req.params.email}" introuvable.`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Utilisateur "${req.params.email}" supprimé avec succès.`,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+module.exports = router;
