@@ -274,5 +274,4 @@ router.get('/reservations', async (req, res) => {
   }
 });
 
-
 module.exports = router;
