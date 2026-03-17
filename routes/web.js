@@ -45,3 +45,63 @@ router.get('/', async (req, res) => {
     res.status(500).send('Erreur serveur : ' + error.message);
   }
 });
+
+// =============================================================================
+// CATWAYS — Pages web
+// =============================================================================
+
+// Liste des catways
+router.get('/catways', async (req, res) => {
+  try {
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('catways', { catways, message: req.query.msg, error: req.query.err });
+  } catch (error) {
+    res.redirect('/dashboard?err=' + encodeURIComponent(error.message));
+  }
+});
+
+// Créer un catway (formulaire POST)
+// Créer un catway (formulaire POST)
+router.post('/catways', async (req, res) => {
+  try {
+    const { catwayNumber, catwayType, catwayState, isAvailable } = req.body;
+    await Catway.create({
+      catwayNumber,
+      catwayType,
+      catwayState,
+      isAvailable: isAvailable === 'true',
+    });
+    res.redirect('/dashboard/catways?msg=Catway créé avec succès');
+  } catch (error) {
+    const msg = error.code === 11000
+      ? `Le numéro ${req.body.catwayNumber} existe déjà`
+      : error.message;
+    res.redirect('/dashboard/catways?err=' + encodeURIComponent(msg));
+  }
+});
+
+// Modifier un catway (POST avec suffixe /edit)
+router.post('/catways/:id/edit', async (req, res) => {
+  try {
+    const { catwayState } = req.body;
+    await Catway.findOneAndUpdate(
+      { catwayNumber: req.params.id },
+      { catwayState },
+      { runValidators: true }
+    );
+    res.redirect('/dashboard/catways?msg=Catway mis à jour');
+  } catch (error) {
+    res.redirect('/dashboard/catways?err=' + encodeURIComponent(error.message));
+  }
+});
+
+// Supprimer un catway (POST avec suffixe /delete)
+router.post('/catways/:id/delete', async (req, res) => {
+  try {
+    await Catway.findOneAndDelete({ catwayNumber: req.params.id });
+    await Reservation.deleteMany({ catwayNumber: req.params.id });
+    res.redirect('/dashboard/catways?msg=Catway supprimé');
+  } catch (error) {
+    res.redirect('/dashboard/catways?err=' + encodeURIComponent(error.message));
+  }
+});
