@@ -24,3 +24,22 @@
 body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+/* === Navbar === */
+.navbar {
+  background: var(--primary);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-brand { font-size: 1.3rem; font-weight: 700; letter-spacing: .5px; }
+.nav-links { list-style: none; display: flex; gap: 1.5rem; }
+.nav-links a { color: rgba(255,255,255,.85); font-size: .9rem; transition: color .2s; }
+.nav-links a:hover { color: var(--white); text-decoration: none; }
+.btn-logout { background: rgba(255,255,255,.15); padding: .3rem .8rem; border-radius: 20px; }
+.btn-logout:hover { background: rgba(255,255,255,.25) !important; }
