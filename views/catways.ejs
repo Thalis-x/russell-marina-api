@@ -1,0 +1,15 @@
+<%- include('partials/head', { title: 'Gestion des Catways' }) %>
+<%- include('partials/nav') %>
+
+<div class="dashboard-container">
+  <div class="page-header">
+    <h1>Gestion des Catways</h1>
+    <button class="btn-primary" onclick="showModal('createModal')">+ Nouveau catway</button>
+  </div>
+
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="alert alert-success"><%= message %></div>
+  <% } %>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
