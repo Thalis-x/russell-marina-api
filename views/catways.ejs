@@ -1,0 +1,150 @@
+<%- include('partials/head', { title: 'Gestion des Catways' }) %>
+<%- include('partials/nav') %>
+
+<div class="dashboard-container">
+  <div class="page-header">
+    <h1>Gestion des Catways</h1>
+    <button class="btn-primary" onclick="showModal('createModal')">+ Nouveau catway</button>
+  </div>
+
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="alert alert-success"><%= message %></div>
+  <% } %>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <!-- Tableau des catways -->
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Type</th>
+          <th>État</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% catways.forEach(c => { %>
+        <tr>
+          <td><span class="badge">#<%= c.catwayNumber %></span></td>
+          <td>
+            <span class="tag tag-<%= c.catwayType %>"><%= c.catwayType %></span>
+          </td>
+          <td class="state-cell">
+            <% if (c.catwayState === 'bon état') { %>
+              <span class="status-ok"><%= c.catwayState %></span>
+            <% } else { %>
+              <span class="status-warn"><%= c.catwayState %></span>
+            <% } %>
+          </td>
+          <td class="actions">
+           <button class="btn-sm btn-edit"
+              data-number="<%= c.catwayNumber %>"
+              data-state="<%= c.catwayState %>"
+              onclick="showEditModal(this.dataset.number, this.dataset.state)">
+              Modifier
+            </button>
+            <form action="/dashboard/catways/<%= c.catwayNumber %>/delete" method="POST"
+              style="display:inline"
+              onsubmit="return confirm('Supprimer le catway #<%= c.catwayNumber %> ?')">
+              <button type="submit" class="btn-sm btn-delete">Supprimer</button>
+            </form>
+            <% if (c.isAvailable !== false) { %>
+              <a href="/dashboard/catways/<%= c.catwayNumber %>/reservations" class="btn-sm btn-view">
+                Réservations
+              </a>
+            <% } else { %>
+               <button class="btn-sm btn-view" disabled title="<%= c.catwayState %>"
+                style="opacity:.4; cursor:not-allowed;">
+                Réservations
+              </button>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal : Créer un catway -->
+<div id="createModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Nouveau Catway</h2>
+    <form action="/dashboard/catways" method="POST">
+      <div class="form-group">
+        <label>Numéro</label>
+        <input type="number" name="catwayNumber" min="1" required />
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select name="catwayType" required>
+          <option value="short">Short</option>
+          <option value="long">Long</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>État</label>
+        <textarea name="catwayState" rows="3">bon état</textarea>
+      </div>
+      <div class="form-group" style="flex-direction: row; align-items: center; gap: .8rem;">
+        <input type="checkbox" name="isAvailable" id="isAvailable" value="true" checked />
+        <label for="isAvailable" style="margin: 0;">Disponible à la réservation</label>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary">Créer</button>
+        <button type="button" class="btn-secondary" onclick="hideModal('createModal')">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : Modifier l'état d'un catway -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Modifier l'état du Catway <span id="editCatwayNum"></span></h2>
+    <form id="editForm" method="POST">
+      <div class="form-group">
+        <label>État (seule valeur modifiable)</label>
+        <textarea name="catwayState" id="editState" rows="3" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary">Enregistrer</button>
+        <button type="button" class="btn-secondary" onclick="hideModal('editModal')">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+  }
+  function hideModal(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+  function showEditModal(number, state) {
+    document.getElementById('editCatwayNum').textContent = '#' + number;
+    document.getElementById('editState').value = state;
+    document.getElementById('editForm').action = '/dashboard/catways/' + number + '/edit';
+    showModal('editModal');
+  }
+  // Fermer la modale en cliquant en dehors
+  let mouseDownTarget = null;
+  window.addEventListener('mousedown', e => {
+  mouseDownTarget = e.target;
+});
+window.addEventListener('click', e => {
+  if (
+    e.target.classList.contains('modal') &&
+    mouseDownTarget.classList.contains('modal')
+  ) {
+    e.target.classList.add('hidden');
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<%- include('partials/head', { title: 'Tableau de bord' }) %>
+<%- include('partials/nav') %>
+
+<div class="dashboard-container">
+  <!-- En-tête utilisateur -->
+  <div class="dashboard-header">
+    <div class="user-info">
+      <h1>Bonjour, <strong><%= user.username %></strong> </h1>
+      <p class="user-email"> <%= user.email %></p>
+    </div>
+    <div class="date-display">
+      <p> <%= new Date().toLocaleDateString('fr-FR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      }) %></p>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number"><%= totalCatways %></div>
+      <div class="stat-label">Catways au total</div>
+    </div>
+    <div class="stat-card stat-active">
+      <div class="stat-number"><%= activeReservations.length %></div>
+      <div class="stat-label">Réservations en cours</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= totalUsers %></div>
+      <div class="stat-label">Utilisateurs</div>
+    </div>
+  </div>
+
+  <!-- Tableau des réservations en cours -->
+  <section class="reservations-section">
+    <h2> Réservations en cours</h2>
+
+    <% if (activeReservations.length === 0) { %>
+      <p class="empty-state">Aucune réservation en cours actuellement.</p>
+    <% } else { %>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>N° Catway</th>
+              <th>Client</th>
+              <th>Bateau</th>
+              <th>Date début</th>
+              <th>Date fin</th>
+              <th>Jours restants</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% activeReservations.forEach(r => {
+              const today = new Date();
+              const end   = new Date(r.endDate);
+              const daysLeft = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+            %>
+            <tr>
+              <td><span class="badge"><%= r.catwayNumber %></span></td>
+              <td><%= r.clientName %></td>
+              <td><em><%= r.boatName %></em></td>
+              <td><%= new Date(r.startDate).toLocaleDateString('fr-FR') %></td>
+              <td><%= new Date(r.endDate).toLocaleDateString('fr-FR') %></td>
+              <td>
+                <span class="days-badge <%= daysLeft <= 7 ? 'urgent' : '' %>">
+                  <%= daysLeft %> j
+                </span>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </section>
+
+  <!-- Liens rapides -->
+  <section class="quick-links">
+    <h2>Accès rapide</h2>
+    <div class="links-grid">
+      <a href="/dashboard/catways" class="quick-link-card">
+        <span></span>
+        <strong>Gérer les catways</strong>
+        <small>Créer, modifier, supprimer</small>
+      </a>
+      <a href="/dashboard/reservations" class="quick-link-card">
+        <span></span>
+        <strong>Gérer les réservations</strong>
+        <small>Consulter et administrer</small>
+      </a>
+      <a href="/dashboard/users" class="quick-link-card">
+        <span></span>
+        <strong>Gérer les utilisateurs</strong>
+        <small>Comptes de la capitainerie</small>
+      </a>
+      <a href="/api-docs" class="quick-link-card" target="_blank">
+        <span></span>
+        <strong>Documentation API</strong>
+        <small>Swagger UI interactif</small>
+      </a>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>
