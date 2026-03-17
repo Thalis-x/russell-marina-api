@@ -19,3 +19,41 @@ const { protect } = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
 
 router.use(protect);
+
+// =============================================================================
+// GET /catways/:id/reservations — Toutes les réservations d'un catway
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways/{id}/reservations:
+ *   get:
+ *     summary: Liste toutes les réservations d'un catway
+ *     tags: [Réservations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des réservations
+ */
+router.get('/', async (req, res) => {
+  try {
+    const reservations = await Reservation.find({
+      catwayNumber: req.params.id,
+    }).sort({ startDate: -1 }); // Triées par date décroissante (plus récente en premier)
+
+    res.status(200).json({
+      success: true,
+      count: reservations.length,
+      data: reservations,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
