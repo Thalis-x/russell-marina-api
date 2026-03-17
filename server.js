@@ -131,3 +131,49 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     })();
   `,
 }));
+
+// =============================================================================
+// Routes
+// =============================================================================
+
+// Page d'accueil (route publique)
+app.get('/', (req, res) => {
+  res.render('index', { title: 'Accueil', error: null });
+});
+
+// Authentification (routes publiques)
+app.use('/', authRoutes);
+
+// API REST (routes protégées par JWT)
+app.use('/catways', catwayRoutes);
+app.use('/users', userRoutes);
+
+// Routes web du tableau de bord (protégées par cookie JWT)
+app.use('/dashboard', webRoutes);
+
+// =============================================================================
+// Gestion des erreurs 404
+// =============================================================================
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.method} ${req.originalUrl} introuvable.`,
+  });
+});
+
+// =============================================================================
+// Démarrage du serveur
+// =============================================================================
+const PORT = process.env.PORT || 3000;
+
+//visible sur le terminal
+app.listen(PORT, () => {
+  console.log('');
+  console.log(`      Port de Plaisance Russell — API démarrée`);
+  console.log(`   Application : http://localhost:${PORT}`);
+  console.log(`   API Docs    : http://localhost:${PORT}/api-docs`);
+  console.log(`   Base de données : ${process.env.MONGODB_URI}`);
+  console.log('');
+});
+
+module.exports = app;
