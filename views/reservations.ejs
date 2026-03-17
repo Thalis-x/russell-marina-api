@@ -77,3 +77,32 @@
   </div>
   <% } %>
 </div>
+
+<!-- Modal : Créer réservation -->
+<div id="createModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Nouvelle réservation — Catway #<%= catwayNumber %></h2>
+    <form action="/dashboard/catways/<%= catwayNumber %>/reservations" method="POST">
+      <div class="form-group">
+        <label>Nom du client</label>
+        <input type="text" name="clientName" required />
+      </div>
+      <div class="form-group">
+        <label>Nom du bateau</label>
+        <input type="text" name="boatName" required />
+      </div>
+      <div class="form-group">
+        <label>Date de début</label>
+        <input type="date" name="startDate" required />
+      </div>
+      <div class="form-group">
+        <label>Date de fin</label>
+        <input type="date" name="endDate" required />
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-primary">Réserver</button>
+        <button type="button" class="btn-secondary" onclick="hideModal('createModal')">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
