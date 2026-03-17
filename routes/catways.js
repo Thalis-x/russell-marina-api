@@ -146,3 +146,73 @@ router.post('/', async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// PUT /catways/:id — Modifier l'état d'un catway
+// IMPORTANT : seul catwayState est modifiable (catwayNumber et catwayType ne le sont PAS)
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways/{id}:
+ *   put:
+ *     summary: Modifie l'état d'un catway (catwayState uniquement)
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [catwayState]
+ *             properties:
+ *               catwayState:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Catway mis à jour
+ *       404:
+ *         description: Catway non trouvé
+ */
+router.put('/:id', async (req, res) => {
+  try {
+    // On n'extrait QUE catwayState du body — catwayNumber et catwayType sont ignorés
+    const { catwayState } = req.body;
+
+    if (!catwayState) {
+      return res.status(400).json({
+        success: false,
+        message: 'Seul catwayState peut être modifié.',
+      });
+    }
+
+    const catway = await Catway.findOneAndUpdate(
+      { catwayNumber: req.params.id },
+      { catwayState },
+      { new: true, runValidators: true }, // new: true → retourne le document mis à jour
+    );
+
+    if (!catway) {
+      return res.status(404).json({
+        success: false,
+        message: `Catway numéro ${req.params.id} introuvable.`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'État du catway mis à jour.',
+      data: catway,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
