@@ -23,3 +23,35 @@ const catwayRoutes       = require('./routes/catways');
 const reservationRoutes  = require('./routes/reservations');
 const userRoutes         = require('./routes/users');
 const webRoutes          = require('./routes/web');
+
+// --- Swagger (documentation API) ---
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi    = require('swagger-ui-express');
+
+// =============================================================================
+// Connexion MongoDB
+// =============================================================================
+connectDB();
+
+// =============================================================================
+// Initialisation d'Express
+// =============================================================================
+const app = express();
+
+// --- Middlewares globaux ---
+
+// Parsing du corps des requêtes JSON (pour les appels API)
+app.use(express.json());
+
+// Parsing des formulaires HTML (application/x-www-form-urlencoded)
+app.use(express.urlencoded({ extended: true }));
+
+// Parsing des cookies (utilisé pour le token JWT)
+app.use(cookieParser());
+
+// Fichiers statiques (CSS, JS, images) servis depuis /public
+app.use(express.static(path.join(__dirname, 'public')));
+
+// --- Moteur de vues EJS ---
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
