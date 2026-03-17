@@ -195,3 +195,84 @@ router.post('/catways/:id/reservations/:resId/delete', async (req, res) => {
     );
   }
 });
+
+// =============================================================================
+// UTILISATEURS — Pages web
+// =============================================================================
+
+// Liste des utilisateurs
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.render('users', {
+      users,
+      currentUser: req.user,
+      message: req.query.msg,
+      error:   req.query.err,
+    });
+  } catch (error) {
+    res.redirect('/dashboard?err=' + encodeURIComponent(error.message));
+  }
+});
+
+// Créer un utilisateur
+router.post('/users', async (req, res) => {
+  try {
+    await User.create(req.body);
+    res.redirect('/dashboard/users?msg=Utilisateur créé avec succès');
+  } catch (error) {
+    const msg = error.code === 11000 ? 'Email déjà utilisé' : error.message;
+    res.redirect('/dashboard/users?err=' + encodeURIComponent(msg));
+  }
+});
+
+// Modifier un utilisateur
+router.post('/users/:email/edit', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const updateData = {};
+    if (username) updateData.username = username;
+    if (password) {
+      const bcrypt = require('bcryptjs');
+      updateData.password = await bcrypt.hash(password, 12);
+    }
+    await User.findOneAndUpdate(
+      { email: req.params.email },
+      updateData,
+      { runValidators: true }
+    );
+    res.redirect('/dashboard/users?msg=Utilisateur mis à jour');
+  } catch (error) {
+    res.redirect('/dashboard/users?err=' + encodeURIComponent(error.message));
+  }
+});
+
+// Supprimer un utilisateur
+router.post('/users/:email/delete', async (req, res) => {
+  try {
+    if (req.user.email === decodeURIComponent(req.params.email)) {
+      return res.redirect('/dashboard/users?err=Impossible de supprimer votre propre compte');
+    }
+    await User.findOneAndDelete({ email: decodeURIComponent(req.params.email) });
+    res.redirect('/dashboard/users?msg=Utilisateur supprimé');
+  } catch (error) {
+    res.redirect('/dashboard/users?err=' + encodeURIComponent(error.message));
+  }
+});
+
+// Liste globale de toutes les réservations
+router.get('/reservations', async (req, res) => {
+  try {
+    const reservations = await Reservation.find().sort({ startDate: -1 });
+    res.render('all-reservations', {
+      reservations,
+      message: req.query.msg,
+      error:   req.query.err,
+    });
+  } catch (error) {
+    res.redirect('/dashboard?err=' + encodeURIComponent(error.message));
+  }
+});
+
+
+module.exports = router;
