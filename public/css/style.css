@@ -155,3 +155,16 @@ a:hover { text-decoration: underline; }
 .status-badge.past     { background: #eeeeee; color: #616161; }
 .status-badge.upcoming { background: #e3f2fd; color: #1565c0; }
 
+/* === Sections === */
+.reservations-section, .quick-links { margin-top: 2rem; }
+.reservations-section h2, .quick-links h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.2rem; }
+.links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.quick-link-card {
+  background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 1.5rem; text-align: center; transition: transform .2s, box-shadow .2s;
+  color: var(--text); display: flex; flex-direction: column; gap: .4rem;
+}
+.quick-link-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.12); text-decoration: none; }
+.quick-link-card span { font-size: 2rem; }
+.quick-link-card small { color: var(--text-light); font-size: .8rem; }
+
