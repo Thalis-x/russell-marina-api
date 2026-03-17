@@ -13,3 +13,58 @@
   <% if (typeof error !== 'undefined' && error) { %>
     <div class="alert alert-error"><%= error %></div>
   <% } %>
+
+  <!-- Tableau des catways -->
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Type</th>
+          <th>État</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% catways.forEach(c => { %>
+        <tr>
+          <td><span class="badge">#<%= c.catwayNumber %></span></td>
+          <td>
+            <span class="tag tag-<%= c.catwayType %>"><%= c.catwayType %></span>
+          </td>
+          <td class="state-cell">
+            <% if (c.catwayState === 'bon état') { %>
+              <span class="status-ok"><%= c.catwayState %></span>
+            <% } else { %>
+              <span class="status-warn"><%= c.catwayState %></span>
+            <% } %>
+          </td>
+          <td class="actions">
+           <button class="btn-sm btn-edit"
+              data-number="<%= c.catwayNumber %>"
+              data-state="<%= c.catwayState %>"
+              onclick="showEditModal(this.dataset.number, this.dataset.state)">
+              Modifier
+            </button>
+            <form action="/dashboard/catways/<%= c.catwayNumber %>/delete" method="POST"
+              style="display:inline"
+              onsubmit="return confirm('Supprimer le catway #<%= c.catwayNumber %> ?')">
+              <button type="submit" class="btn-sm btn-delete">Supprimer</button>
+            </form>
+            <% if (c.isAvailable !== false) { %>
+              <a href="/dashboard/catways/<%= c.catwayNumber %>/reservations" class="btn-sm btn-view">
+                Réservations
+              </a>
+            <% } else { %>
+               <button class="btn-sm btn-view" disabled title="<%= c.catwayState %>"
+                style="opacity:.4; cursor:not-allowed;">
+                Réservations
+              </button>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
