@@ -135,3 +135,32 @@
     </form>
   </div>
 </div>
+
+<script>
+  function showModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function hideModal(id) { document.getElementById(id).classList.add('hidden'); }
+  function showEditModal(id, client, boat, start, end) {
+    document.getElementById('editClient').value = client;
+    document.getElementById('editBoat').value   = boat;
+    document.getElementById('editStart').value  = start;
+    document.getElementById('editEnd').value    = end;
+    document.getElementById('editForm').action  =
+      '/dashboard/catways/<%= catwayNumber %>/reservations/' + id + '/edit';
+    showModal('editModal');
+  }
+let mouseDownTarget = null;
+window.addEventListener('mousedown', e => {
+  mouseDownTarget = e.target;
+});
+window.addEventListener('click', e => {
+  if (
+    e.target.classList.contains('modal') &&
+    mouseDownTarget.classList.contains('modal')
+  ) {
+    e.target.classList.add('hidden');
+  }
+});
+</script>
+</body>
+</html>
+
