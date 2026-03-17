@@ -43,3 +43,28 @@ a:hover { text-decoration: underline; }
 .nav-links a:hover { color: var(--white); text-decoration: none; }
 .btn-logout { background: rgba(255,255,255,.15); padding: .3rem .8rem; border-radius: 20px; }
 .btn-logout:hover { background: rgba(255,255,255,.25) !important; }
+
+/* === Home Page === */
+.home-container { min-height: 100vh; display: flex; flex-direction: column; }
+.home-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dk) 100%);
+  color: var(--white); text-align: center; padding: 3rem 2rem;
+}
+.anchor-icon { font-size: 3rem; margin-bottom: .5rem; }
+.home-header h1 { font-size: 2.2rem; margin-bottom: .5rem; }
+.subtitle { opacity: .8; font-size: 1.1rem; }
+.home-main {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2rem; max-width: 960px; margin: 3rem auto; padding: 0 1.5rem; width: 100%;
+}
+.presentation {
+  background: var(--white); padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.presentation h2 { color: var(--primary); margin-bottom: 1rem; }
+.presentation ul { margin: 1rem 0 1.5rem 1.2rem; }
+.presentation li { margin-bottom: .5rem; }
+.btn-doc {
+  display: inline-block; background: var(--primary); color: var(--white);
+  padding: .7rem 1.4rem; border-radius: var(--radius); transition: background .2s;
+}
+.btn-doc:hover { background: var(--primary-dk); text-decoration: none; }
