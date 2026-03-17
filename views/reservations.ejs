@@ -1,0 +1,79 @@
+<%- include('partials/head', { title: 'Réservations — Catway #' + catwayNumber }) %>
+<%- include('partials/nav') %>
+
+<div class="dashboard-container">
+  <div class="page-header">
+    <div>
+      <a href="/dashboard/catways" class="back-link">← Retour aux catways</a>
+      <h1>Réservations du Catway #<%= catwayNumber %></h1>
+    </div>
+    <button class="btn-primary" onclick="showModal('createModal')">+ Nouvelle réservation</button>
+  </div>
+
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="alert alert-success"><%= message %></div>
+  <% } %>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <% if (reservations.length === 0) { %>
+    <p class="empty-state">Aucune réservation pour ce catway.</p>
+  <% } else { %>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Date début</th>
+          <th>Date fin</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% const today = new Date(); %>
+        <% reservations.forEach(r => {
+          const start  = new Date(r.startDate);
+          const end    = new Date(r.endDate);
+          const active = today >= start && today <= end;
+          const past   = today > end;
+        %>
+        <tr class="<%= past ? 'row-past' : '' %>">
+          <td><strong><%= r.clientName %></strong></td>
+          <td><em><%= r.boatName %></em></td>
+          <td><%= start.toLocaleDateString('fr-FR') %></td>
+          <td><%= end.toLocaleDateString('fr-FR') %></td>
+          <td>
+            <% if (active) { %>
+              <span class="status-badge active">En cours</span>
+            <% } else if (past) { %>
+              <span class="status-badge past">Terminée</span>
+            <% } else { %>
+              <span class="status-badge upcoming">À venir</span>
+            <% } %>
+          </td>
+          <td class="actions">
+           <button class="btn-sm btn-edit"
+             data-id="<%= r._id %>"
+             data-client="<%= r.clientName %>"
+             data-boat="<%= r.boatName %>"
+             data-start="<%= r.startDate.toISOString().split('T')[0] %>"
+             data-end="<%= r.endDate.toISOString().split('T')[0] %>"
+             onclick="showEditModal(this.dataset.id, this.dataset.client, this.dataset.boat, this.dataset.start, this.dataset.end)">
+              Modifier
+            </button>
+            <form action="/dashboard/catways/<%= catwayNumber %>/reservations/<%= r._id %>/delete"
+              method="POST" style="display:inline"
+              onsubmit="return confirm('Supprimer cette réservation ?')">
+              <button type="submit" class="btn-sm btn-delete">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
