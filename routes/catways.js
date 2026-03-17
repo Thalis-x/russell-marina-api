@@ -216,3 +216,58 @@ router.put('/:id', async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// DELETE /catways/:id — Supprimer un catway
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways/{id}:
+ *   delete:
+ *     summary: Supprime un catway
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Catway supprimé
+ *       404:
+ *         description: Catway non trouvé
+ */
+router.delete('/:id', async (req, res) => {
+  try {
+    const catway = await Catway.findOneAndDelete({
+      catwayNumber: req.params.id,
+    });
+
+    if (!catway) {
+      return res.status(404).json({
+        success: false,
+        message: `Catway numéro ${req.params.id} introuvable.`,
+      });
+    }
+
+    // On supprime aussi toutes les réservations liées à ce catway
+    await Reservation.deleteMany({ catwayNumber: req.params.id });
+
+    res.status(200).json({
+      success: true,
+      message: `Catway numéro ${req.params.id} supprimé avec succès.`,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Monter le router des réservations en sous-ressource
+const reservationRoutes = require('./reservations');
+router.use('/:id/reservations', reservationRoutes);
+
+module.exports = router;
