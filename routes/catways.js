@@ -49,3 +49,46 @@ router.get('/', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// GET /catways/:id — Détail d'un catway
+// =============================================================================
+
+/**
+ * @swagger
+ * /catways/{id}:
+ *   get:
+ *     summary: Récupère les détails d'un catway
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numéro du catway
+ *     responses:
+ *       200:
+ *         description: Détails du catway
+ *       404:
+ *         description: Catway non trouvé
+ */
+router.get('/:id', async (req, res) => {
+  try {
+    // On cherche par catwayNumber (pas par _id MongoDB)
+    const catway = await Catway.findOne({ catwayNumber: req.params.id });
+
+    if (!catway) {
+      return res.status(404).json({
+        success: false,
+        message: `Catway numéro ${req.params.id} introuvable.`,
+      });
+    }
+
+    res.status(200).json({ success: true, data: catway });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
