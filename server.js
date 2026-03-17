@@ -10,7 +10,7 @@
 // =============================================================================
 
 // Charger les variables d'environnement EN PREMIER (avant tout require qui en a besoin)
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 const express      = require('express');
 const cookieParser = require('cookie-parser');

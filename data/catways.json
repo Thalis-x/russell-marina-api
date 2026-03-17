@@ -26,7 +26,8 @@
     {
         "catwayNumber": 6,
         "catwayType": "short",
-        "catwayState": "En cours de réparation. Ne peut être réservée actuellement"
+        "catwayState": "En cours de réparation. Ne peut être réservée actuellement",
+        "isAvailable": false
     },
     {
         "catwayNumber": 7,
@@ -56,7 +57,8 @@
     {
         "catwayNumber": 12,
         "catwayType": "short",
-        "catwayState": "grosse tâche d'huile et trou en fin de ponton"
+        "catwayState": "grosse tâche d'huile et trou en fin de ponton",
+        "isAvailable": false
     },
     {
         "catwayNumber": 13,

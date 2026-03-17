@@ -48,13 +48,12 @@ const userSchema = new mongoose.Schema(
 // Ce code s'exécute AVANT chaque save() si le mot de passe a été modifié.
 // On utilise bcrypt avec un "salt" de 12 tours (bon compromis sécurité/perf).
 // -----------------------------------------------------------------------------
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   // Si le mot de passe n'a pas été modifié, on passe au suivant
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) return;
 
   // Hachage du mot de passe
   this.password = await bcrypt.hash(this.password, 12);
-  next();
 });
 
 // -----------------------------------------------------------------------------
