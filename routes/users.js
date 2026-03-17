@@ -85,3 +85,66 @@ router.get('/:email', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// =============================================================================
+// POST /users/ — Créer un utilisateur
+// =============================================================================
+
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Crée un nouvel utilisateur
+ *     tags: [Utilisateurs]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username, email, password]
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé
+ *       400:
+ *         description: Données invalides ou email déjà utilisé
+ */
+router.post('/', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    const user = await User.create({ username, email, password });
+
+    // Ne pas renvoyer le mot de passe dans la réponse
+    const userResponse = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      createdAt: user.createdAt,
+    };
+
+    res.status(201).json({
+      success: true,
+      message: 'Utilisateur créé avec succès.',
+      data: userResponse,
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cette adresse email est déjà utilisée.',
+      });
+    }
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
