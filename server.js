@@ -82,8 +82,8 @@ L'API utilise des **tokens JWT**. Pour accéder aux routes protégées :
       contact: { name: 'Capitainerie de Russell' },
     },
     servers: [
+      { url: 'https://russell-marina-api-b67g.onrender.com', description: 'Serveur de production' },
       { url: 'http://localhost:3000', description: 'Serveur de développement' },
-      { url: process.env.PRODUCTION_URL || '', description: 'Serveur de production' },
     ],
     components: {
       securitySchemes: {
