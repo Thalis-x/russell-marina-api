@@ -1,0 +1,70 @@
+<%- include('partials/head', { title: 'Accueil' }) %>
+
+<div class="home-container">
+  <!-- En-tête -->
+  <header class="home-header">
+    <div class="anchor-icon">⚓</div>
+    <h1>Port de Plaisance Russell</h1>
+    <p class="subtitle">Système de gestion des réservations de catways</p>
+  </header>
+
+  <main class="home-main">
+    <!-- Présentation -->
+    <section class="presentation">
+      <h2>Bienvenue à la capitainerie</h2>
+      <p>
+        Cette application permet à la capitainerie du Port de Plaisance Russell de gérer
+        les catways (appontements d'amarrage) et les réservations des plaisanciers.
+      </p>
+      <ul>
+        <li>Gestion complète des catways (numéro, type, état)</li>
+        <li>Réservations avec vérification des conflits de dates</li>
+        <li> Administration des comptes utilisateurs</li>
+        <li> Documentation API intégrée</li>
+      </ul>
+      <a href="/api-docs" class="btn-doc" target="_blank">Consulter la documentation API</a>
+    </section>
+
+    <!-- Formulaire de connexion -->
+    <section class="login-section">
+      <h2>Connexion</h2>
+
+      <!-- Affichage des erreurs -->
+      <% if (error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <!-- Action vers POST /login -->
+      <form action="/login" method="POST" class="login-form">
+        <div class="form-group">
+          <label for="email">Adresse email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="capitaine@russell.fr"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" class="btn-primary">Se connecter</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+</body>
+</html>

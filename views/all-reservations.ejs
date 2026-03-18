@@ -1,0 +1,66 @@
+<%- include('partials/head', { title: 'Toutes les Réservations' }) %>
+<%- include('partials/nav') %>
+
+<div class="dashboard-container">
+  <div class="page-header">
+    <h1>Toutes les Réservations</h1>
+  </div>
+
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="alert alert-success"><%= message %></div>
+  <% } %>
+
+  <% if (reservations.length === 0) { %>
+    <p class="empty-state">Aucune réservation enregistrée.</p>
+  <% } else { %>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>N° Catway</th>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Date début</th>
+          <th>Date fin</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% const today = new Date(); %>
+        <% reservations.forEach(r => {
+          const start  = new Date(r.startDate);
+          const end    = new Date(r.endDate);
+          const active = today >= start && today <= end;
+          const past   = today > end;
+        %>
+        <tr>
+          <td><span class="badge">#<%= r.catwayNumber %></span></td>
+          <td><strong><%= r.clientName %></strong></td>
+          <td><em><%= r.boatName %></em></td>
+          <td><%= start.toLocaleDateString('fr-FR') %></td>
+          <td><%= end.toLocaleDateString('fr-FR') %></td>
+          <td>
+            <% if (active) { %>
+              <span class="status-badge active">En cours</span>
+            <% } else if (past) { %>
+              <span class="status-badge past">Terminée</span>
+            <% } else { %>
+              <span class="status-badge upcoming">À venir</span>
+            <% } %>
+          </td>
+          <td>
+            <a href="/dashboard/catways/<%= r.catwayNumber %>/reservations" class="btn-sm btn-view">
+              Voir détails
+            </a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+</body>
+</html>
