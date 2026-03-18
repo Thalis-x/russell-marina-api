@@ -1,6 +1,12 @@
 # russell-marina-api
 Application web de gestion des réservations de catways pour le port de Russell, avec API privée sécurisée pour gérer les disponibilités et les attributions d’amarrage.
 
+## Application en ligne
+- Application : https://russell-marina-api-b67g.onrender.com
+- Documentation API : https://russell-marina-api-b67g.onrender.com/api-docs
+- Email : admin@russell.fr
+- Mot de passe : admin123
+
 ## Technologies
 
 - **Backend** : Node.js + Express.js
