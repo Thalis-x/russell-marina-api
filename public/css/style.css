@@ -32,17 +32,26 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
-  height: 60px;
+  padding: 0 1rem;
+  min-height: 60px;
   box-shadow: 0 2px 8px rgba(0,0,0,.2);
   position: sticky; top: 0; z-index: 100;
+  flex-wrap: wrap;
+  gap: .5rem;
 }
-.nav-brand { font-size: 1.3rem; font-weight: 700; letter-spacing: .5px; }
-.nav-links { list-style: none; display: flex; gap: 1.5rem; }
-.nav-links a { color: rgba(255,255,255,.85); font-size: .9rem; transition: color .2s; }
+.nav-brand { font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+.nav-links { 
+  list-style: none; 
+  display: flex; 
+  flex-wrap: wrap;
+  gap: .5rem; 
+  padding: .3rem 0;
+}
+.nav-links a { color: rgba(255,255,255,.85); font-size: .82rem; transition: color .2s; white-space: nowrap; }
 .nav-links a:hover { color: var(--white); text-decoration: none; }
 .btn-logout { background: rgba(255,255,255,.15); padding: .3rem .8rem; border-radius: 20px; }
 .btn-logout:hover { background: rgba(255,255,255,.25) !important; }
+
 
 /* === Home Page === */
 .home-container { min-height: 100vh; display: flex; flex-direction: column; }
@@ -188,12 +197,24 @@ a:hover { text-decoration: underline; }
 .modal-content h2 { color: var(--primary); }
 .modal-actions { display: flex; gap: .8rem; margin-top: .5rem; }
 
+
 /* === Responsive === */
 @media (max-width: 768px) {
+  html, body { overflow-x: hidden; max-width: 100%; }
   .home-main { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr; }
   .links-grid { grid-template-columns: repeat(2, 1fr); }
-  .navbar { padding: 0 1rem; }
-  .nav-links { gap: .8rem; }
+  .navbar { padding: 0.5rem 1rem; }
+  .nav-links { gap: .5rem; }
   .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .table-wrapper { overflow-x: auto; }
+  .data-table { min-width: 600px; }
+  .dashboard-container { padding: 1rem; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: .8rem; }
+}
+
+@media (max-width: 480px) {
+  .nav-links a { font-size: .75rem; }
+  .nav-brand { font-size: 1rem; }
+  .links-grid { grid-template-columns: 1fr; }
 }
