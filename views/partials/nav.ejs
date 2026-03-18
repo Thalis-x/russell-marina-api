@@ -1,6 +1,13 @@
 <nav class="navbar">
   <div class="nav-brand"> Port Russell</div>
-  <ul class="nav-links">
+
+  <button class="burger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <ul class="nav-links" id="navLinks">
     <li><a href="/dashboard">Tableau de bord</a></li>
     <li><a href="/dashboard/catways">Catways</a></li>
     <li><a href="/dashboard/reservations">Réservations</a></li>
@@ -9,3 +16,15 @@
     <li><a href="/logout" class="btn-logout">Déconnexion</a></li>
   </ul>
 </nav>
+
+<script>
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.remove('open');
+    });
+  });
+</script>
