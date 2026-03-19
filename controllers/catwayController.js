@@ -1,5 +1,3 @@
-// controllers/catwayController.js
-// =============================================================================
 // CONTRÔLEUR CATWAYS
 // Contient toute la logique métier pour les opérations CRUD des catways.
 // La logique est séparée des routes pour une meilleure organisation du code.

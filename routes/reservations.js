@@ -1,5 +1,3 @@
-// routes/reservations.js
-// =============================================================================
 // ROUTES RÉSERVATIONS — Sous-ressource de Catway
 // Les réservations sont liées à un catway spécifique.
 // L'URL reflète cette relation : /catways/:id/reservations

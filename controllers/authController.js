@@ -1,5 +1,3 @@
-// controllers/authController.js
-// =============================================================================
 // CONTRÔLEUR AUTHENTIFICATION
 // Contient la logique métier pour le login et le logout.
 // =============================================================================
