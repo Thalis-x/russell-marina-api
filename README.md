@@ -1,6 +1,12 @@
 # russell-marina-api
 Application web de gestion des réservations de catways pour le port de Russell, avec API privée sécurisée pour gérer les disponibilités et les attributions d’amarrage.
 
+## Application en ligne
+- Application : https://russell-marina-api-b67g.onrender.com
+- Documentation API : https://russell-marina-api-b67g.onrender.com/api-docs
+- Email : admin@russell.fr
+- Mot de passe : admin123
+
 ## Technologies
 
 - **Backend** : Node.js + Express.js
@@ -111,39 +117,55 @@ npm start
 
 ---
 
-##  Structure du projet
+## Architecture MVC
 
+Le projet suit une architecture **MVC (Modèle - Vue - Contrôleur)** :
+
+| Couche | Dossier | Rôle |
+|---|---|---|
+| **Modèle** | `models/` | Schémas MongoDB et validation des données |
+| **Vue** | `views/` | Templates EJS pour le rendu HTML |
+| **Contrôleur** | `controllers/` | Logique métier séparée des routes |
+| **Routes** | `routes/` | Définition des endpoints et appel aux controllers |
+
+
+## Structure du projet
 ```
 russell-marina-api/
-├── server.js           # Point d'entrée, configuration Express
-├── seed.js             # Script d'initialisation de la DB
-├── .env.example        # Template des variables d'environnement
+├── server.js                  # Point d'entrée, configuration Express
+├── seed.js                    # Script d'initialisation de la DB
+├── .env.example               # Template des variables d'environnement
 ├── config/
-│   └── db.js           # Connexion MongoDB
+│   └── db.js                  # Connexion MongoDB
 ├── models/
-│   ├── User.js         # Modèle utilisateur (avec hachage mdp)
-│   ├── Catway.js       # Modèle catway
-│   └── Reservation.js  # Modèle réservation
+│   ├── User.js                # Modèle utilisateur (avec hachage mdp)
+│   ├── Catway.js              # Modèle catway
+│   └── Reservation.js         # Modèle réservation
+├── controllers/
+│   ├── authController.js      # Logique métier authentification
+│   ├── catwayController.js    # Logique métier catways
+│   ├── reservationController.js # Logique métier réservations
+│   └── userController.js      # Logique métier utilisateurs
 ├── middleware/
-│   └── auth.js         # Middleware JWT (protect + protectWeb)
+│   └── auth.js                # Middleware JWT (protect + protectWeb)
 ├── routes/
-│   ├── auth.js         # POST /login, GET /logout
-│   ├── catways.js      # CRUD catways (API REST)
-│   ├── reservations.js # CRUD réservations (API REST)
-│   ├── users.js        # CRUD utilisateurs (API REST)
-│   └── web.js          # Routes du tableau de bord HTML
-├── ├── views/
-│   ├── index.ejs            # Page d'accueil + connexion
-│   ├── dashboard.ejs        # Tableau de bord
-│   ├── catways.ejs          # Gestion des catways
-│   ├── reservations.ejs     # Gestion des réservations d'un catway
-│   ├── all-reservations.ejs # Liste de toutes les réservations
-│   ├── users.ejs            # Gestion des utilisateurs
-│   └── partials/            # Fragments réutilisables (nav, head)
+│   ├── auth.js                # POST /login, GET /logout
+│   ├── catways.js             # CRUD catways (API REST)
+│   ├── reservations.js        # CRUD réservations (API REST)
+│   ├── users.js               # CRUD utilisateurs (API REST)
+│   └── web.js                 # Routes du tableau de bord HTML
+├── views/
+│   ├── index.ejs              # Page d'accueil + connexion
+│   ├── dashboard.ejs          # Tableau de bord (données via fetch)
+│   ├── catways.ejs            # Gestion des catways
+│   ├── reservations.ejs       # Gestion des réservations d'un catway
+│   ├── all-reservations.ejs   # Liste de toutes les réservations
+│   ├── users.ejs              # Gestion des utilisateurs
+│   └── partials/              # Fragments réutilisables (nav, head)
 ├── public/
-│   └── css/style.css   # Feuille de style
+│   └── css/style.css          # Feuille de style
 └── data/
-    ├── catways.json     # Données initiales
+    ├── catways.json           # Données initiales
     └── reservations.json
 ```
 
