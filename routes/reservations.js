@@ -246,6 +246,37 @@ router.put('/:idReservation', async (req, res) => {
   try {
     // On exclut catwayNumber du body pour ne pas pouvoir le modifier
     const { catwayNumber: _, ...updateData } = req.body;
+     const { startDate, endDate } = updateData;
+
+    // Vérifier le chevauchement si les dates sont modifiées
+    if (startDate || endDate) {
+      // Récupérer la réservation actuelle
+      const current = await Reservation.findById(req.params.idReservation);
+      
+      const start = new Date(startDate || current.startDate);
+      const end   = new Date(endDate   || current.endDate);
+
+      // Chercher un chevauchement en excluant la réservation actuelle
+      const overlap = await Reservation.findOne({
+        _id:         { $ne: req.params.idReservation }, // exclure la réservation actuelle
+        catwayNumber: req.params.id,
+        startDate:   { $lt: end },
+        endDate:     { $gt: start },
+      });
+
+      if (overlap) {
+        return res.status(400).json({
+          success: false,
+          message: `Conflit avec la réservation de ${overlap.clientName} 
+          du ${new Date(overlap.startDate).toLocaleDateString('fr-FR')} 
+          au ${new Date(overlap.endDate).toLocaleDateString('fr-FR')}`,
+        });
+      }
+
+      updateData.startDate = start;
+      updateData.endDate   = end;
+    }
+
 
     const reservation = await Reservation.findOneAndUpdate(
       { _id: req.params.idReservation, catwayNumber: req.params.id },
