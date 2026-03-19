@@ -192,7 +192,7 @@ router.post('/catways/:id/reservations/:resId/edit', async (req, res) => {
     await Reservation.findByIdAndUpdate(
       req.params.resId,
       { clientName, boatName, startDate: start, endDate: end },
-      { runValidators: true }
+      { runValidators: false }
     );
 
     res.redirect(`/dashboard/catways/${req.params.id}/reservations?msg=Réservation mise à jour`);
