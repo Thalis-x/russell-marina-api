@@ -171,11 +171,30 @@ router.post('/catways/:id/reservations', async (req, res) => {
 router.post('/catways/:id/reservations/:resId/edit', async (req, res) => {
   try {
     const { clientName, boatName, startDate, endDate } = req.body;
+    const start = new Date(startDate);
+    const end   = new Date(endDate);
+
+    // Vérifier le chevauchement en excluant la réservation actuelle
+    const overlap = await Reservation.findOne({
+      _id:          { $ne: req.params.resId },
+      catwayNumber: req.params.id,
+      startDate:    { $lt: end },
+      endDate:      { $gt: start },
+    });
+
+    if (overlap) {
+      const msg = `Conflit avec la réservation de ${overlap.clientName}`;
+      return res.redirect(
+        `/dashboard/catways/${req.params.id}/reservations?err=${encodeURIComponent(msg)}`
+      );
+    }
+
     await Reservation.findByIdAndUpdate(
       req.params.resId,
-      { clientName, boatName, startDate: new Date(startDate), endDate: new Date(endDate) },
-      { runValidators: true }
+      { clientName, boatName, startDate: start, endDate: end },
+      { runValidators: false }
     );
+
     res.redirect(`/dashboard/catways/${req.params.id}/reservations?msg=Réservation mise à jour`);
   } catch (error) {
     res.redirect(
