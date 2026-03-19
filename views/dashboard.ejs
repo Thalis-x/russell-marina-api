@@ -5,74 +5,40 @@
   <!-- En-tête utilisateur -->
   <div class="dashboard-header">
     <div class="user-info">
-      <h1>Bonjour, <strong><%= user.username %></strong> </h1>
-      <p class="user-email"> <%= user.email %></p>
+      <h1>Bonjour, <strong><%= user.username %></strong></h1>
+      <p class="user-email"><%= user.email %></p>
     </div>
     <div class="date-display">
-      <p> <%= new Date().toLocaleDateString('fr-FR', {
+      <p><%= new Date().toLocaleDateString('fr-FR', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       }) %></p>
     </div>
   </div>
 
-  <!-- Statistiques rapides -->
+  <!-- Statistiques — remplies par fetch() -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-number"><%= totalCatways %></div>
+      <!-- id="totalCatways" → JavaScript va mettre le chiffre ici -->
+      <div class="stat-number" id="totalCatways">...</div>
       <div class="stat-label">Catways au total</div>
     </div>
     <div class="stat-card stat-active">
-      <div class="stat-number"><%= activeReservations.length %></div>
+      <div class="stat-number" id="activeCount">...</div>
       <div class="stat-label">Réservations en cours</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number"><%= totalUsers %></div>
+      <div class="stat-number" id="totalUsers">...</div>
       <div class="stat-label">Utilisateurs</div>
     </div>
   </div>
 
-  <!-- Tableau des réservations en cours -->
+  <!-- Tableau des réservations en cours — rempli par fetch() -->
   <section class="reservations-section">
-    <h2> Réservations en cours</h2>
-
-    <% if (activeReservations.length === 0) { %>
-      <p class="empty-state">Aucune réservation en cours actuellement.</p>
-    <% } else { %>
-      <div class="table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>N° Catway</th>
-              <th>Client</th>
-              <th>Bateau</th>
-              <th>Date début</th>
-              <th>Date fin</th>
-              <th>Jours restants</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% activeReservations.forEach(r => {
-              const today = new Date();
-              const end   = new Date(r.endDate);
-              const daysLeft = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
-            %>
-            <tr>
-              <td><span class="badge"><%= r.catwayNumber %></span></td>
-              <td><%= r.clientName %></td>
-              <td><em><%= r.boatName %></em></td>
-              <td><%= new Date(r.startDate).toLocaleDateString('fr-FR') %></td>
-              <td><%= new Date(r.endDate).toLocaleDateString('fr-FR') %></td>
-              <td>
-                <span class="days-badge <%= daysLeft <= 7 ? 'urgent' : '' %>">
-                  <%= daysLeft %> j
-                </span>
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-    <% } %>
+    <h2>Réservations en cours</h2>
+    <!-- Le tableau sera injecté ici par JavaScript -->
+    <div id="reservationsContainer">
+      <p class="empty-state">Chargement...</p>
+    </div>
   </section>
 
   <!-- Liens rapides -->
@@ -80,28 +46,149 @@
     <h2>Accès rapide</h2>
     <div class="links-grid">
       <a href="/dashboard/catways" class="quick-link-card">
-        <span></span>
         <strong>Gérer les catways</strong>
         <small>Créer, modifier, supprimer</small>
       </a>
       <a href="/dashboard/reservations" class="quick-link-card">
-        <span></span>
         <strong>Gérer les réservations</strong>
         <small>Consulter et administrer</small>
       </a>
       <a href="/dashboard/users" class="quick-link-card">
-        <span></span>
         <strong>Gérer les utilisateurs</strong>
         <small>Comptes de la capitainerie</small>
       </a>
       <a href="/api-docs" class="quick-link-card" target="_blank">
-        <span></span>
         <strong>Documentation API</strong>
         <small>Swagger UI interactif</small>
       </a>
     </div>
   </section>
 </div>
+
+<script>
+// =============================================================================
+// CHARGEMENT DES DONNÉES VIA FETCH()
+// Au lieu d'accéder directement aux modèles côté serveur,
+// on appelle l'API REST depuis le navigateur avec fetch()
+// =============================================================================
+
+// On attend que la page soit chargée avant de lancer les requêtes
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadDashboardData();
+});
+
+async function loadDashboardData() {
+  try {
+    // --- Appel 1 : Récupérer tous les catways ---
+    // fetch() envoie une requête GET à l'API
+    // Le cookie JWT est envoyé automatiquement par le navigateur
+    const catwaysRes  = await fetch('/catways');
+    const catwaysData = await catwaysRes.json();
+
+    // On affiche le nombre total de catways
+    document.getElementById('totalCatways').textContent = catwaysData.count || 0;
+
+    // --- Appel 2 : Récupérer tous les utilisateurs ---
+    const usersRes  = await fetch('/users');
+    const usersData = await usersRes.json();
+
+    // On affiche le nombre total d'utilisateurs
+    document.getElementById('totalUsers').textContent = usersData.count || 0;
+
+    // --- Appel 3 : Récupérer les réservations de chaque catway ---
+    // On filtre ensuite côté client pour garder uniquement les réservations en cours
+    const today = new Date();
+    let activeReservations = [];
+
+    // Pour chaque catway, on récupère ses réservations
+    if (catwaysData.data) {
+      for (const catway of catwaysData.data) {
+        const resRes  = await fetch(`/catways/${catway.catwayNumber}/reservations`);
+        const resData = await resRes.json();
+
+        if (resData.data) {
+          // On filtre les réservations actives (en cours aujourd'hui)
+          const active = resData.data.filter(r => {
+            const start = new Date(r.startDate);
+            const end   = new Date(r.endDate);
+            return today >= start && today <= end;
+          });
+          // On ajoute les réservations actives à la liste globale
+          activeReservations = [...activeReservations, ...active];
+        }
+      }
+    }
+
+    // On affiche le nombre de réservations actives
+    document.getElementById('activeCount').textContent = activeReservations.length;
+
+    // On génère le tableau des réservations actives
+    renderReservationsTable(activeReservations);
+
+  } catch (error) {
+    console.error('Erreur lors du chargement des données :', error);
+    document.getElementById('reservationsContainer').innerHTML =
+      '<p class="alert alert-error">Erreur lors du chargement des données.</p>';
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Génère le tableau HTML des réservations actives
+// Appelée après avoir récupéré toutes les réservations via fetch()
+// -----------------------------------------------------------------------------
+function renderReservationsTable(reservations) {
+  const container = document.getElementById('reservationsContainer');
+
+  // Si aucune réservation active on affiche un message
+  if (reservations.length === 0) {
+    container.innerHTML = '<p class="empty-state">Aucune réservation en cours actuellement.</p>';
+    return;
+  }
+
+  const today = new Date();
+
+  // Génération des lignes du tableau
+  const rows = reservations.map(r => {
+    const end      = new Date(r.endDate);
+    // Calcul du nombre de jours restants
+    const daysLeft = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+
+    return `
+      <tr>
+        <td><span class="badge">${r.catwayNumber}</span></td>
+        <td>${r.clientName}</td>
+        <td><em>${r.boatName}</em></td>
+        <td>${new Date(r.startDate).toLocaleDateString('fr-FR')}</td>
+        <td>${new Date(r.endDate).toLocaleDateString('fr-FR')}</td>
+        <td>
+          <span class="days-badge ${daysLeft <= 7 ? 'urgent' : ''}">
+            ${daysLeft} j
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Injection du tableau complet dans le conteneur
+  container.innerHTML = `
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>N° Catway</th>
+            <th>Client</th>
+            <th>Bateau</th>
+            <th>Date debut</th>
+            <th>Date fin</th>
+            <th>Jours restants</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+</script>
 
 </body>
 </html>

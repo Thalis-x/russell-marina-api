@@ -21,29 +21,13 @@ router.use(protectWeb);
 // =============================================================================
 // GET /dashboard — Tableau de bord principal
 // =============================================================================
-router.get('/', async (req, res) => {
-  try {
-    const today = new Date();
-
-    // Réservations actives = celles dont la date de début est passée
-    // ET la date de fin n'est pas encore atteinte
-    const activeReservations = await Reservation.find({
-      startDate: { $lte: today },
-      endDate:   { $gte: today },
-    }).sort({ endDate: 1 });
-
-    const totalCatways = await Catway.countDocuments();
-    const totalUsers   = await User.countDocuments();
-
-    res.render('dashboard', {
-      user: req.user,
-      activeReservations,
-      totalCatways,
-      totalUsers,
-    });
-  } catch (error) {
-    res.status(500).send('Erreur serveur : ' + error.message);
-  }
+// Les données sont chargées côté client via fetch() dans dashboard.ejs
+router.get('/', (req, res) => {
+  // On envoie uniquement l'utilisateur connecté
+  // Les stats et réservations sont récupérées via fetch() depuis le navigateur
+  res.render('dashboard', {
+    user: req.user,
+  });
 });
 
 // =============================================================================
