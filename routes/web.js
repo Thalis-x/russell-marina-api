@@ -21,29 +21,13 @@ router.use(protectWeb);
 // =============================================================================
 // GET /dashboard — Tableau de bord principal
 // =============================================================================
-router.get('/', async (req, res) => {
-  try {
-    const today = new Date();
-
-    // Réservations actives = celles dont la date de début est passée
-    // ET la date de fin n'est pas encore atteinte
-    const activeReservations = await Reservation.find({
-      startDate: { $lte: today },
-      endDate:   { $gte: today },
-    }).sort({ endDate: 1 });
-
-    const totalCatways = await Catway.countDocuments();
-    const totalUsers   = await User.countDocuments();
-
-    res.render('dashboard', {
-      user: req.user,
-      activeReservations,
-      totalCatways,
-      totalUsers,
-    });
-  } catch (error) {
-    res.status(500).send('Erreur serveur : ' + error.message);
-  }
+// Les données sont chargées côté client via fetch() dans dashboard.ejs
+router.get('/', (req, res) => {
+  // On envoie uniquement l'utilisateur connecté
+  // Les stats et réservations sont récupérées via fetch() depuis le navigateur
+  res.render('dashboard', {
+    user: req.user,
+  });
 });
 
 // =============================================================================
@@ -171,11 +155,30 @@ router.post('/catways/:id/reservations', async (req, res) => {
 router.post('/catways/:id/reservations/:resId/edit', async (req, res) => {
   try {
     const { clientName, boatName, startDate, endDate } = req.body;
+    const start = new Date(startDate);
+    const end   = new Date(endDate);
+
+    // Vérifier le chevauchement en excluant la réservation actuelle
+    const overlap = await Reservation.findOne({
+      _id:          { $ne: req.params.resId },
+      catwayNumber: req.params.id,
+      startDate:    { $lt: end },
+      endDate:      { $gt: start },
+    });
+
+    if (overlap) {
+      const msg = `Conflit avec la réservation de ${overlap.clientName}`;
+      return res.redirect(
+        `/dashboard/catways/${req.params.id}/reservations?err=${encodeURIComponent(msg)}`
+      );
+    }
+
     await Reservation.findByIdAndUpdate(
       req.params.resId,
-      { clientName, boatName, startDate: new Date(startDate), endDate: new Date(endDate) },
-      { runValidators: true }
+      { clientName, boatName, startDate: start, endDate: end },
+      { runValidators: false }
     );
+
     res.redirect(`/dashboard/catways/${req.params.id}/reservations?msg=Réservation mise à jour`);
   } catch (error) {
     res.redirect(

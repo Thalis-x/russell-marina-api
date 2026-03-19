@@ -33,7 +33,7 @@
             <span class="tag tag-<%= c.catwayType %>"><%= c.catwayType %></span>
           </td>
           <td class="state-cell">
-            <% if (c.catwayState === 'bon état') { %>
+            <% if (c.catwayState.toLowerCase().trim().includes('bon état')) { %>
               <span class="status-ok"><%= c.catwayState %></span>
             <% } else { %>
               <span class="status-warn"><%= c.catwayState %></span>
